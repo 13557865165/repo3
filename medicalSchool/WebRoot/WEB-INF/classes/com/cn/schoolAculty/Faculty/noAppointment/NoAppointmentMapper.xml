@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cn.schoolAculty.Faculty.noAppointment.NoAppointmentMapper">
+	
+	<sql id="noAppointment_where">
+		<if test="noAppointmentId != null">
+			and noAppointmentId=#{noAppointmentId}
+		</if>
+		
+		<if test="noAppointCode != null and noAppointCode != ''">
+			and noAppointCode like '%${noAppointCode}%'
+		</if>
+		
+		<if test="noAppointName != null and noAppointName != ''">
+			and noAppointName like '%${noAppointName}%'
+		</if>
+		
+		<if test="noAppointSort != null">
+			and noAppointSort=#{noAppointSort}
+		</if>
+		
+		<if test="noAppointRemarks != null and noAppointRemarks != ''">
+			and noAppointRemarks like '%${noAppointRemarks}%'
+		</if>
+		
+	</sql>
+	
+	<select id="selectAllFun" resultType="noAppointment">
+		select * from tbl_noAppointment
+	</select>
+	<select id="selectByIdFun" parameterType="int" resultType="noAppointment">
+		select * from tbl_noAppointment where noAppointmentId = #{id}
+	</select>
+	<select id="selectByConditionFun" parameterType="noAppointmentQuery" resultType="noAppointment">
+		select * from tbl_noAppointment
+		<where>
+			<include refid="noAppointment_where"></include>
+		</where>
+	</select>
+	<select id="selectByConditionPageFun" parameterType="noAppointmentQuery" resultType="noAppointment">
+		select top ${pageSize} * from tbl_noAppointment
+		<where>
+			noAppointmentId not in (
+				select top ${startNum} noAppointmentId from tbl_noAppointment
+					<where>
+						<include refid="noAppointment_where"></include>
+					</where>
+					order by noAppointmentId)
+					<include refid="noAppointment_where"></include>
+		</where>
+			order by noAppointmentId
+	</select>
+	
+	<insert id="insertFun" parameterType="noAppointment" useGeneratedKeys="true" keyProperty="noAppointmentId">
+		insert into tbl_noAppointment values(#{noAppointmentId},#{noAppointCode},#{noAppointName},#{noAppointSort},#{noAppointUse},#{noAppointRemarks})
+	</insert>
+	
+	<delete id="deleteFun" parameterType="int">
+		delete from tbl_noAppointment where noAppointmentId = #{id}
+	</delete>
+	
+	<update id="updateFun" parameterType="noAppointment">
+		update tbl_noAppointment set noAppointCode=#{noAppointCode},noAppointName=#{noAppointName},noAppointSort=#{noAppointSort},noAppointUse=#{noAppointUse},noAppointRemarks=#{noAppointRemarks} where noAppointmentId =#{noAppointmentId}
+	</update>
+</mapper>
